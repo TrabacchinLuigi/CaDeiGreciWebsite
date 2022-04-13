@@ -1,0 +1,153 @@
+﻿:root {
+    --header-height: 88px;
+}
+
+body {
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+.brand > svg {
+    padding: 3.92% 8% 2.9%;
+    background-color: var(--light);
+    fill: var(--dark);
+    max-width: 100%;
+    width: 125px;
+}
+
+.navbar-brand.brand > svg {
+    width: 125px;
+}
+
+.slide {
+    width: 100vw;
+    height: 56.25vw;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--dark);
+}
+
+    .slide .bgimage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+        .slide .bgimage:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+    .slide > .container {
+        position: absolute;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+.fixed-top {
+    right: unset;
+    width: 100vw;
+}
+
+.navbar.bg-dark {
+    background-color: transparent !important;
+}
+
+    .navbar.bg-dark .background {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--dark);
+        z-index: -1;
+        opacity: 0;
+    }
+
+
+/*@media (orientation: landscape) {
+    .ComingSoon {
+        --width: 80vw;
+    }
+}*/
+
+/*@media (orientation: portrait) {
+    .ComingSoon {
+        --width: 80vw;
+    }
+}*/
+
+.ComingSoon .brand {
+    width: 100%;
+}
+
+    .ComingSoon .brand > svg {
+        padding: 0;
+        width: 100%;
+    }
+
+.ComingSoon .slide {
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+    .ComingSoon .slide .container {
+        width: min(80vw, 80vh);
+        height: min(80vw, 80vh);
+        border-style: solid;
+        border-color: var(--dark);
+        background-color: var(--light);
+        border-radius: 50%;
+        border-width: min(3vw, 3vh);
+        font-size: min(2vw, 2vh);
+        padding: min(10vw, 10vh);
+    }
+
+        .ComingSoon .slide .container .display-4 {
+            font-size: min(6vw, 6vh);
+        }
+
+.split-row {
+    position: relative;
+}
+
+    .split-row > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .split-row > .background {
+        width: 50%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+        .split-row > .background.right {
+            left: 50%;
+        }
+
+    .split-row > .content {
+        width: 100%;
+        position: relative;
+    }
