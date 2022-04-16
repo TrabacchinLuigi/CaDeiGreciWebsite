@@ -18,6 +18,7 @@ namespace CaDeiGreciWebsite.Data.Settings
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.HasDefaultSchema($"{nameof(CaDeiGreciWebsite.Data.Settings)}");
         }
     }
 }

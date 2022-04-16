@@ -15,5 +15,11 @@ namespace CaDeiGreciWebsite.Data.Identity
         }
 
         protected DbContext() : base() { }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.HasDefaultSchema($"{nameof(CaDeiGreciWebsite.Data.Identity)}");
+        }
     }
 }

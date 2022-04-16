@@ -20,11 +20,12 @@ namespace CaDeiGreciWebsite.Data.Menu
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.HasDefaultSchema($"{nameof(CaDeiGreciWebsite.Data.Menu)}");
             modelBuilder.Entity<Category>(x => x.HasMany(y => y.Items).WithOne(x => x.Category).OnDelete(DeleteBehavior.Restrict));
             modelBuilder.Entity<Category>(x => x.HasMany(y => y.PriceKinds).WithOne(x => x.Category).OnDelete(DeleteBehavior.Restrict));
             modelBuilder.Entity<Item>(x => x.HasMany(y => y.Prices).WithOne(y => y.MenuItem).OnDelete(DeleteBehavior.Restrict));
             modelBuilder.Entity<CategoryPriceKind>(x => x.HasMany(y => y.Prices).WithOne(y => y.MenuPriceKind).OnDelete(DeleteBehavior.Restrict));
-            base.OnModelCreating(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
