@@ -3,25 +3,25 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "twitter-bootstrap@4.6.0",
+      "library": "twitter-bootstrap@4.6.1",
       "destination": "wwwroot/libs/bootstrap/",
       "files": [
         "js/bootstrap.min.js"
       ]
     },
     {
-      "library": "popper.js@2.6.0",
+      "library": "popper.js@2.11.5",
       "destination": "wwwroot/libs/popper.js/",
       "files": [
         "umd/popper.min.js"
       ]
     },
     {
-      "library": "bootstrap-icons@1.3.0",
+      "library": "bootstrap-icons@1.8.1",
       "destination": "wwwroot/libs/bootstrap-icons/"
     },
     {
-      "library": "jquery@3.5.1",
+      "library": "jquery@3.6.0",
       "destination": "wwwroot/libs/jquery/",
       "files": [
         "jquery.min.js"

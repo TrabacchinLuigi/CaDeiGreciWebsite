@@ -12,20 +12,38 @@
         percentage = percentage > 1 ? 1 : percentage < 0 ? 0 : percentage;
         return percentage;
     }
+    /**
+     * @param {HTMLElement} firstSlide
+     * @param {HTMLElement} navbarTop
+     * @param {HTMLElement} maincollassablemenu
+     **/
+    function GetOpacity(firstSlide, navbarTop, maincollassablemenu) {
+        if (maincollassablemenu.classList.contains('show')) return 1;
+        let range = firstSlide.getBoundingClientRect().height - navbarTop.getBoundingClientRect().height;
+        return GetScrollPercentage(range);
+    }
 
     document.addEventListener('DOMContentLoaded', function () {
         let firstSlide = document.getElementById('slide-first');
         let navbarTop = document.getElementById('navbar-top');
         let bg = navbarTop.getElementsByClassName('background')[0];
+        let navbarTogglerButtons = document.getElementsByClassName('navbar-toggler');
+        let maincollassablemenu = document.getElementById('main-collassable-menu');
         if (!(bg instanceof HTMLDivElement)) { throw "navbartop isn't a div"; }
-        let range = firstSlide.getBoundingClientRect().height - navbarTop.getBoundingClientRect().height;
+
 
         window.addEventListener("resize", function (ev) {
-            range = firstSlide.getBoundingClientRect().height - navbarTop.getBoundingClientRect().height;
-            bg.style.opacity = GetScrollPercentage(range);
+            bg.style.opacity = GetOpacity(firstSlide, navbarTop, maincollassablemenu);
         });
         window.addEventListener('scroll', function () {
-            bg.style.opacity = GetScrollPercentage(range);
+            bg.style.opacity = GetOpacity(firstSlide, navbarTop, maincollassablemenu);
         });
+        for (var navbarTogglerButton of navbarTogglerButtons) {
+            navbarTogglerButton.addEventListener('click', function () {
+                setTimeout(function () {
+                    bg.style.opacity = GetOpacity(firstSlide, navbarTop, maincollassablemenu);
+                }, 352);
+            });
+        }
     });
 })();

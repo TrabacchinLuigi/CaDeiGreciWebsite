@@ -1,0 +1,32 @@
+﻿<nav id="navbar-top" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark box-shadow fixed-top overflow-hidden">
+    <div class="background"></div>
+    <div class="container">
+        <a class="navbar-brand brand" asp-area="" asp-page="/Index">
+            <inlinesvg src="images/ca-dei-greci-logo.svg" />
+        </a>
+        <button class="navbar-toggler mr-3" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="main-collassable-menu" class="navbar-collapse collapse d-sm-inline-flex flex-grow-1 flex-column flex-sm-column align-items-sm-end text-right mr-3 pr-3 mr-sm-0 pr-sm-0">
+            <ul class="navbar-nav justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/#Home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/#AboutUs">About us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/Menu">Menu</a>
+                </li>
+                @*<li class="nav-item">
+                <a class="nav-link text-light" asp-area="" asp-page="@Pagelink" asp-fragment="Gallery">Gallery</a>
+                </li>*@
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/#ContactUs">Contact us</a>
+                </li>
+            </ul>
+            <partial name="_LoginPartial" />
+        </div>
+    </div>
+</nav>

@@ -15,6 +15,10 @@ body {
     width: 125px;
 }
 
+.navbar {
+    white-space: nowrap;
+}
+
 .navbar-brand.brand > svg {
     width: 125px;
 }
@@ -29,6 +33,9 @@ body {
     justify-content: center;
     background-color: var(--dark);
 }
+
+    .slide h1 {
+    }
 
     .slide .bgimage {
         position: absolute;
@@ -91,36 +98,59 @@ body {
     }
 }*/
 
-.ComingSoon .brand {
-    width: 100%;
+/*.ComingSoon .brand {
+    width: 97%;
+}*/
+
+.ComingSoon {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
     .ComingSoon .brand > svg {
         padding: 0;
         width: 100%;
-    }
-
-.ComingSoon .slide {
-    height: 100vh;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-    .ComingSoon .slide .container {
-        width: min(80vw, 80vh);
-        height: min(80vw, 80vh);
-        border-style: solid;
-        border-color: var(--dark);
+        /*border-color: var(--dark);*/
+        border-color: #332f2c;
         background-color: var(--light);
-        border-radius: 50%;
-        border-width: min(3vw, 3vh);
-        font-size: min(2vw, 2vh);
-        padding: min(10vw, 10vh);
+        border-radius: 0%;
+        border-width: min(1.5vw, 1.5vh);
+        border-style: solid;
+        padding: min(5vw, 5vh);
     }
 
-        .ComingSoon .slide .container .display-4 {
-            font-size: min(6vw, 6vh);
+    .ComingSoon .slide {
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+    }
+
+        .ComingSoon .slide .bgimage {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            filter: blur(2px) brightness(.75);
+        }
+
+            .ComingSoon .slide .bgimage:before {
+                background-color: transparent;
+            }
+
+    .ComingSoon .container {
+        --side: min(80vw, 80vh);
+        width: var(--side) !important;
+        height: var(--side) !important;
+        font-size: min(2vw, 2vh) !important;
+        max-width: unset;
+        max-height: unset;
+    }
+
+        .ComingSoon .container .display-4 {
+            font-size: min(6vw, 6vh) !important;
         }
 
 .split-row {
