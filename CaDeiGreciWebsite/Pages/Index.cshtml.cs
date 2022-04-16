@@ -19,7 +19,7 @@ namespace CaDeiGreciWebsite.Pages
 
         public IActionResult OnGet()
         {
-            return Redirect("/ComingSoon");
+            return Redirect("/ComingSoon"); // Page(); 
         }
     }
 }

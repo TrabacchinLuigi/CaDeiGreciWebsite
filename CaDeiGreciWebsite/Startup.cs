@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -70,6 +71,7 @@ namespace CaDeiGreciWebsite
                 app.UseHsts();
             }
 
+            app.UseRewriter(new RewriteOptions().AddRedirectToWww());
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
