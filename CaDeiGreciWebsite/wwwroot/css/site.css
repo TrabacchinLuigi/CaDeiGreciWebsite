@@ -8,11 +8,14 @@ body {
 }
 
 .brand > svg {
-    padding: 3.92% 8% 2.9%;
-    background-color: var(--light);
-    fill: var(--dark);
+    padding: 8.92% 13%;
     max-width: 100%;
     width: 125px;
+    background-color: var(--light);
+    fill: var(--dark);
+    border-style: solid;
+    border-color: #332f2c;
+    border-width: 3px;
 }
 
 .navbar {
@@ -25,7 +28,7 @@ body {
 
 .slide {
     width: 100vw;
-    height: 56.25vw;
+    height: 37.5vh;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -46,19 +49,21 @@ body {
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
+        filter: blur(2px) brightness(0.75);
     }
 
-        .slide .bgimage:before {
+    /*.slide .bgimage:before {
             content: '';
             position: absolute;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.6);
-        }
+            background-color: rgba(0,0,0,0.5);
+        }*/
 
     .slide > .container {
+        margin-top: 82px;
         position: absolute;
         flex-direction: column;
         justify-content: center;
@@ -185,3 +190,19 @@ body {
         width: 100%;
         position: relative;
     }
+
+.bg-size-cover {
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position-y: center !important;
+}
+
+.bg-position-center {
+    background-position: center;
+}
+
+#blazor-error-ui {
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: none;
+}

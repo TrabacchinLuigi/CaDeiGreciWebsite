@@ -4,16 +4,7 @@
 @{
     ViewData["LightHeader"] = true;
     ViewData["Title"] = "Menu editor";
-}
-@section Styles {
-}
-@section PreScripts {
-}
-@section Scripts {
 
-
-}
-@{
     var comparer = new DayOfWeekComparer(System.Globalization.CultureInfo.CurrentCulture);
     var allOpenings = dbc.Openings.ToArray();
     var daysOfWeek = Enum.GetValues(typeof(DayOfWeek))

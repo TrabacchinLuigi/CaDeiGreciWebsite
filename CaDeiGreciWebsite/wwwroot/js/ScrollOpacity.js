@@ -31,7 +31,7 @@
         let maincollassablemenu = document.getElementById('main-collassable-menu');
         if (!(bg instanceof HTMLDivElement)) { throw "navbartop isn't a div"; }
 
-
+        if (firstSlide == null) { return; }
         window.addEventListener("resize", function (ev) {
             bg.style.opacity = GetOpacity(firstSlide, navbarTop, maincollassablemenu);
         });
@@ -45,5 +45,6 @@
                 }, 352);
             });
         }
+        bg.style.opacity = GetOpacity(firstSlide, navbarTop, maincollassablemenu);
     });
 })();

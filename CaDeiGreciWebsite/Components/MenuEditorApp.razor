@@ -24,17 +24,17 @@
                 <tr>
                     <th rowspan="1000" width="1" style="background-image: url('@(category.ImageUrl)'); background-position: center; background-size: cover;">
                         <div class="btn-group-vertical btn-group-sm" role="group">
-                            <button type="button" class="btn btn-primary" disabled="@(iCategory == 0)" @onclick="x => HandleOrderableUp(category, y => true)"><span class="oi oi-arrow-thick-top"></span></button>
-                            <button type="button" class="btn btn-primary" disabled="@(iCategory == categories.Length - 1)" @onclick="x => HandleOrderableDown(category, y => true)"><span class="oi oi-arrow-thick-bottom"></span></button>
+                            <button type="button" class="btn btn-primary" disabled="@(iCategory == 0)" @onclick="x => HandleOrderableUp(category, y => true)"><span class="bi bi-arrow-up-short"></span></button>
+                            <button type="button" class="btn btn-primary" disabled="@(iCategory == categories.Length - 1)" @onclick="x => HandleOrderableDown(category, y => true)"><span class="bi bi-arrow-down-short"></span></button>
                             @if (@category.ImageUrl != null)
                             {
-                                <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="right" data-html="true" title="<img src='@category.ImageUrl' alt='' />" @onmousedown="() => { changingImageCategory = category; }" onclick="document.getElementById('input-file').click();" @onblur="HandleBlurs"><span class="oi oi-image"></span></button>
+                                <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="right" data-html="true" title="<img src='@category.ImageUrl' alt='' />" @onmousedown="() => { changingImageCategory = category; }" onclick="document.getElementById('input-file').click();" @onblur="HandleBlurs"><span class="bi bi-image"></span></button>
                             }
                             else
                             {
-                                <button type="button" class="btn btn-primary" @onmousedown="() => { changingImageCategory = category; }" onclick="document.getElementById('input-file').click();" @onblur="HandleBlurs"><span class="oi oi-image"></span></button>
+                                <button type="button" class="btn btn-primary" @onmousedown="() => { changingImageCategory = category; }" onclick="document.getElementById('input-file').click();" @onblur="HandleBlurs"><span class="bi bi-image"></span></button>
                             }
-                            <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(category)"><span class="oi oi-trash"></span></button>
+                            <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(category)"><span class="bi bi-trash"></span></button>
                         </div>
 
                     </th>
@@ -60,19 +60,19 @@
                                     <div class="input-group-append">
                                         @if (iPriceKind > 0)
                                         {
-                                            <button type="button" class="btn btn-primary" @onclick="x => HandleOrderableUp(priceKind, y => y.CategoryId == category.Id)"><span class="oi oi-arrow-thick-left"></span></button>
+                                            <button type="button" class="btn btn-primary" @onclick="x => HandleOrderableUp(priceKind, y => y.CategoryId == category.Id)"><span class="bi bi-arrow-thick-left"></span></button>
                                         }
                                         @if (iPriceKind < priceKinds.Length - 1)
                                         {
-                                            <button type="button" class="btn btn-primary" @onclick="x => HandleOrderableDown(priceKind, y => y.CategoryId == category.Id)"><span class="oi oi-arrow-thick-right"></span></button>
+                                            <button type="button" class="btn btn-primary" @onclick="x => HandleOrderableDown(priceKind, y => y.CategoryId == category.Id)"><span class="bi bi-arrow-thick-right"></span></button>
                                         }
-                                        <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(priceKind)"><span class="oi oi-trash"></span></button>
+                                        <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(priceKind)"><span class="bi bi-trash"></span></button>
                                     </div>
                                 </div>
                             </th>
                         }
                     }
-                    <th rowspan="1000" width="1"><button type="button" class="btn btn-primary btn-sm" @onclick="async e => await HandleAddColumn(category)"><span class="oi oi-plus"></span></button></th>
+                    <th rowspan="1000" width="1"><button type="button" class="btn btn-primary btn-sm" @onclick="async e => await HandleAddColumn(category)"><span class="bi bi-plus"></span></button></th>
                 </tr>
                 @{
                     var items = _menuDbc.Items.Where(x => x.CategoryId == category.Id).OrderBy(x => x.Order).ToArray();
@@ -83,9 +83,9 @@
                         <tr>
                             <td width="1" class="align-middle">
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-primary" disabled="@(iItem == 0)" @onclick="x => HandleOrderableUp(item, y => y.CategoryId == category.Id)"><span class="oi oi-arrow-thick-top"></span></button>
-                                    <button type="button" class="btn btn-primary" disabled="@(iItem == items.Length - 1)" @onclick="x => HandleOrderableDown(item, y => y.CategoryId == category.Id)"><span class="oi oi-arrow-thick-bottom"></span></button>
-                                    <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(item)"><span class="oi oi-trash"></span></button>
+                                    <button type="button" class="btn btn-primary" disabled="@(iItem == 0)" @onclick="x => HandleOrderableUp(item, y => y.CategoryId == category.Id)"><span class="bi bi-arrow-up-short"></span></button>
+                                    <button type="button" class="btn btn-primary" disabled="@(iItem == items.Length - 1)" @onclick="x => HandleOrderableDown(item, y => y.CategoryId == category.Id)"><span class="bi bi-arrow-down-short"></span></button>
+                                    <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(item)"><span class="bi bi-trash"></span></button>
                                 </div>
                             </td>
                             <td>
@@ -127,14 +127,14 @@
                 }
                 <tr>
                     <td colspan="1000">
-                        <button type="button" class="btn btn-primary btn-sm" @onclick="async x => await HandleAddNewItem(category)"><span class="oi oi-plus"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm" @onclick="async x => await HandleAddNewItem(category)"><span class="bi bi-plus"></span></button>
                     </td>
                 </tr>
             </table>
         }
     }
 </div>
-<button type="button" class="btn btn-primary btn-sm" @onclick="async x => await HandleAddNewCategory()"><span class="oi oi-plus"></span> Add category</button>
+<button type="button" class="btn btn-primary btn-sm" @onclick="HandleAddNewCategory"><span class="bi bi-plus-circle"></span> Add category</button>
 <input id="input-file" type="file" @ref="inputTypeFileElement" @onchange="ReadFile" class="d-none" accept="image/*" />
 
 @code {

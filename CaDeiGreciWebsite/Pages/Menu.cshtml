@@ -5,21 +5,16 @@
     ViewData["Title"] = "Menu";
 }
 <div id="slide-first" class="slide text-white">
-    <div class="bgimage" style="background-image:url('/images/coal-4778784_1920.jpg'); height:55vh;"></div>
-    <div class="container d-flex text-center" style="height:55vh;">
-        <h1 class="display-3 mb-3">The most astounding</h1>
-        <p class="lead">Grilling experience <a href="#dove siamo">in your town</a>.</p>
+    <div class="bgimage" style="background-image:url('/images/10pax.jpeg');"></div>
+    <div class="container d-flex text-center">
+        <h1 class="display-3 mb-3">Menu</h1>
+        <p class="lead">Consulta il nostro menù e scegli cosa ti va di gustare oggi.</p>
     </div>
 </div>
 
 <div class="sub-page" id="FullPage-Menu">
 
     <div class="container mb-5 pb-5">
-        <div class="page-title pb-5">
-            <h1 class="display-3">Menu</h1>
-            <p>Consulta il nostro menù e scegli cosa ti va di gustare oggi.</p>
-        </div>
-
         @{
             var even = false;
 
@@ -30,7 +25,7 @@
                 <div class="row">
                     @if (!even)
                     {
-                        <div class="d-none d-sm-block col-sm-3 col-md-5 bg-image-cover" style="background:url('@category.ImageUrl');"></div>
+                        <div class="d-none d-sm-block col-sm-3 col-md-5 bg-size-cover" style="background:url('@category.ImageUrl');"></div>
                     }
                     <div class="col-12 col-sm-9 col-md-7">
                         <table class="table table-hover small">
@@ -100,7 +95,7 @@
                     </div>
                     @if (even)
                     {
-                        <div class="d-none d-sm-block col-sm-3 col-md-5 bg-image-cover" style="background:url('@category.ImageUrl');"></div>
+                        <div class="d-none d-sm-block col-sm-3 col-md-5 bg-size-cover" style="background:url('@category.ImageUrl');"></div>
                     }
                 </div>
             }

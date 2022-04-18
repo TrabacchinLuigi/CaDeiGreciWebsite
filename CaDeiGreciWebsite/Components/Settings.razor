@@ -58,14 +58,13 @@
                     </div>
                 </td>
                 <td>
-                    <a href="#" @onclick="async x => await HandleDelete(opening)" @onclick:preventDefault class="btn btn-danger btn-sm"><span class="oi oi-trash"></span></a>
+                    <a href="#" @onclick="async x => await HandleDelete(opening)" @onclick:preventDefault class="btn btn-danger btn-sm"><span class="bi bi-trash"></span></a>
                 </td>
             </tr>
         }
     </table>
 </div>
-<a href="#" @onclick="async x => await HandleAddNewOpening()" @onclick:preventDefault class="btn btn-primary btn-sm"><span class="oi oi-plus"></span></a>
-
+<a href="#" @onclick="HandleAddNewOpening" @onclick:preventDefault class="btn btn-primary btn-sm"><span class="bi bi-plus"></span> Add</a>
 
 @code {
     private Boolean _shouldRender;
