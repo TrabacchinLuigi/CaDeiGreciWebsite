@@ -4,6 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="SilentWave.AspNetCore.Identity.UI.Services" Version="1.0.5" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.4" />

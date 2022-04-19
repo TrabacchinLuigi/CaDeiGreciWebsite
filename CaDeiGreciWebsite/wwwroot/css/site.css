@@ -195,6 +195,7 @@ body {
     background-size: cover !important;
     background-repeat: no-repeat !important;
     background-position-y: center !important;
+    background-position-x: center !important;
 }
 
 .bg-position-center {

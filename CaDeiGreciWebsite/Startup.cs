@@ -28,7 +28,7 @@ namespace CaDeiGreciWebsite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddIdentityEmailSender(x => Configuration.GetSection("Options:MailSender").Bind(x));
+            services.AddIdentityEmailSender(x => Configuration.GetSection("Options:MailSender").Bind(x));
             services.AddDbContext<Data.Settings.DbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("SettingsConnection")));
