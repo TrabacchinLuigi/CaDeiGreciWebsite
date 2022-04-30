@@ -14,6 +14,10 @@ namespace CaDeiGreciWebsite.Data.Menu
         public String Name { get; set; }
         public String Description { get; set; }
         public Boolean Show { get; set; }
-        public List<Price> Prices { get; set; }
+        public List<Price> Prices { get; } = new();
+        public List<Quality> Qualities { get; } = new();
+        public List<Allergen> Allergens { get; } = new();
+        public List<ItemQuality> ItemQualities { get; } = new();
+        public List<ItemAllergen> ItemAllergens { get; } = new();
     }
 }

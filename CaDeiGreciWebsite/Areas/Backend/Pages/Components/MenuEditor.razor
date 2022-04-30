@@ -1,0 +1,663 @@
+﻿@page "/backend/menueditor"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.EntityFrameworkCore.Query
+@implements IDisposable
+@inject IServiceScopeFactory _serviceScopeFactory
+@inject IJSRuntime JSRuntime
+@inject IFileReaderService fileReaderService
+@inject IWebHostEnvironment _webHostEnv
+
+<div class="display-4 position-absolute w-100 text-light" style="left:0; top:220px;">
+    <div class="container">
+        <h3 class="display-4">Menu editor</h3>
+    </div>
+</div>
+
+@if (_mainScope == null)
+{
+    <div class="display-3">
+        Loading...
+    </div>
+}
+else
+{
+    <div style="overflow-y: auto;">
+        <h2 class="font-weight-light">Qualities</h2>
+        @{
+            {
+                var allQualities = _menuDbc.Qualities.Local.OrderBy(q => q.Order).ThenBy(q => q.Id).ToArray();
+                for (var iQuality = 0; iQuality < allQualities.Length; iQuality++)
+                {
+                    var quality = allQualities[iQuality];
+                    quality.Order = iQuality;
+                    var fileinputId = $"inputFile_quality_{quality.Id}";
+
+                    <div class="input-group input-group-sm flex-nowrap my-1">
+                        <div class="input-group-prepend">
+                            <button type="button" class="btn btn-primary" disabled="@(iQuality == 0)" @onclick="x => HandleOrderableUp(quality, y => true)"><span class="bi bi-arrow-up-short"></span></button>
+                            <button type="button" class="btn btn-primary" disabled="@(iQuality == allQualities.Length - 1)" @onclick="x => HandleOrderableDown(quality, y => true)"><span class="bi bi-arrow-down-short"></span></button>
+                            <InputFile OnChange="@((InputFileChangeEventArgs x) => LoadFilesQuality(x, quality))" id="@fileinputId" class="d-none" accept=".svg" />
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('@fileinputId').click();"><span class="bi bi-image"></span></button>
+                            <span class="input-group-text"><img src="/Uploads/Qualities/@(quality.Id).svg?imageupdateDate=@(quality.ImageUpdateDate.ToString("O"))" title="@(quality.Description ?? quality.Name)" style="height:1.3em; width:1.3em;" /></span>
+                        </div>
+                        <input type="text" @bind="quality.Name" @onblur="HandleBlurs" class="form-control" placeholder="Quality name" style="min-width: 80px" />
+                        <input type="text" @bind="quality.Description" @onblur="HandleBlurs" class="form-control" placeholder="Quality Description" style="min-width: 180px" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger" @onclick="async x => await HandleDeleteQuality(quality)"><span class="bi bi-trash"></span></button>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        <button type="button" class="btn btn-primary btn-sm" @onclick="HandleAddNewQuality"><span class="bi bi-plus-circle"></span> Add quality</button>
+
+        <h2 class="font-weight-light mt-5">Allergens</h2>
+        @{
+            {
+                var allAllergens = _menuDbc.Allergens.Local.OrderBy(q => q.Order).ThenBy(q => q.Id).ToArray();
+                for (var iAllergen = 0; iAllergen < allAllergens.Length; iAllergen++)
+                {
+                    var allergen = allAllergens[iAllergen];
+                    allergen.Order = iAllergen;
+                    var fileinputId = $"inputFile_allergen_{allergen.Id}";
+
+                    <div class="input-group input-group-sm flex-nowrap my-1">
+                        <div class="input-group-prepend">
+                            <button type="button" class="btn btn-primary" disabled="@(iAllergen == 0)" @onclick="x => HandleOrderableUp(allergen, y => true)"><span class="bi bi-arrow-up-short"></span></button>
+                            <button type="button" class="btn btn-primary" disabled="@(iAllergen == allAllergens.Length - 1)" @onclick="x => HandleOrderableDown(allergen, y => true)"><span class="bi bi-arrow-down-short"></span></button>
+                            <InputFile OnChange="@((InputFileChangeEventArgs x) => LoadFilesAllergen(x, allergen))" id="@fileinputId" class="d-none" accept=".svg" />
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('@fileinputId').click();"><span class="bi bi-image"></span></button>
+                            <span class="input-group-text"><img src="/Uploads/Allergens/@(allergen.Id).svg?imageupdateDate=@(allergen.ImageUpdateDate.ToString("O"))" title="@(allergen.Description ?? allergen.Name)" style="height:1.3em; width:1.3em;" /></span>
+                        </div>
+                        <input type="text" @bind="allergen.Name" @onblur="HandleBlurs" class="form-control" placeholder="Allergen name" style="min-width: 80px" />
+                        <input type="text" @bind="allergen.Description" @onblur="HandleBlurs" class="form-control" placeholder="Allergen Description" style="min-width: 180px" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger" @onclick="async x => await HandleDeleteAllergen(allergen)"><span class="bi bi-trash"></span></button>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        <button type="button" class="btn btn-primary btn-sm" @onclick="HandleAddNewAllergen"><span class="bi bi-plus-circle"></span> Add allergen</button>
+
+        <h2 class="font-weight-light mt-5">Categories</h2>
+        @{
+            var categories = _menuDbc.Categories.Local.OrderBy(x => x.Order).ToArray();
+            for (var iCategory = 0; iCategory < categories.Length; iCategory++)
+            {
+                var category = categories[iCategory];
+                category.Order = iCategory;
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th rowspan="1000" width="1" style="background-image: url('@(category.ImageUrl)'); background-position: center; background-size: cover;">
+                            <div class="btn-group-vertical btn-group-sm" role="group">
+                                <button type="button" class="btn btn-primary" disabled="@(iCategory == 0)" @onclick="x => HandleOrderableUp(category, y => true)"><span class="bi bi-arrow-up-short"></span></button>
+                                <button type="button" class="btn btn-primary" disabled="@(iCategory == categories.Length - 1)" @onclick="x => HandleOrderableDown(category, y => true)"><span class="bi bi-arrow-down-short"></span></button>
+                                @if (@category.ImageUrl != null)
+                                {
+                                    <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="right" data-html="true" title="<img src='@category.ImageUrl' alt='' />" @onmousedown="() => { changingImageCategory = category; }" onclick="document.getElementById('input-file').click();" @onblur="HandleBlurs"><span class="bi bi-image"></span></button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-primary" @onmousedown="() => { changingImageCategory = category; }" onclick="document.getElementById('input-file').click();" @onblur="HandleBlurs"><span class="bi bi-image"></span></button>
+                                }
+                                <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(category)"><span class="bi bi-trash"></span></button>
+                            </div>
+
+                        </th>
+                        <th colspan="2">
+                            <div class="input-group flex-nowrap">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <input type="checkbox" @bind="category.Show" @onblur="HandleBlurs" />
+                                    </div>
+                                </div>
+                                <input type="text" @bind="category.Name" @onblur="HandleBlurs" class="form-control" placeholder="Menu category name" />
+                            </div>
+                        </th>
+                        @{
+                            var priceKinds = _menuDbc.CategoriesPriceKind.Local.Where(x => x.CategoryId == category.Id).OrderBy(x => x.Order).ToArray();
+                            for (var iPriceKind = 0; iPriceKind < priceKinds.Length; iPriceKind++)
+                            {
+                                var priceKind = priceKinds[iPriceKind];
+                                priceKind.Order = iPriceKind;
+                                <th width="1">
+                                    <div class="input-group input-group-sm flex-nowrap">
+                                        <input type="text" @bind="priceKind.Name" @onblur="HandleBlurs" class="form-control" placeholder="Menu column name" style="min-width: 80px" />
+                                        <div class="input-group-append">
+                                            @if (iPriceKind > 0)
+                                            {
+                                                <button type="button" class="btn btn-primary" @onclick="x => HandleOrderableUp(priceKind, y => y.CategoryId == category.Id)"><span class="bi bi-arrow-left"></span></button>
+                                            }
+                                            @if (iPriceKind < priceKinds.Length - 1)
+                                            {
+                                                <button type="button" class="btn btn-primary" @onclick="x => HandleOrderableDown(priceKind, y => y.CategoryId == category.Id)"><span class="bi bi-arrow-right"></span></button>
+                                            }
+                                            <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(priceKind)"><span class="bi bi-trash"></span></button>
+                                        </div>
+                                    </div>
+                                </th>
+                            }
+                        }
+                        <th rowspan="1000" width="1"><button type="button" class="btn btn-primary btn-sm" @onclick="async e => await HandleAddColumn(category)"><span class="bi bi-plus"></span></button></th>
+                    </tr>
+                    @{
+                        var items = _menuDbc.Items.Local.Where(x => x.CategoryId == category.Id).OrderBy(x => x.Order).ToArray();
+                        for (var iItem = 0; iItem < items.Length; iItem++)
+                        {
+                            var item = items[iItem];
+                            item.Order = iItem;
+                            <tr>
+                                <td width="1" class="align-top">
+                                    <div class="btn-group-vertical btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-primary" disabled="@(iItem == 0)" @onclick="x => HandleOrderableUp(item, y => y.CategoryId == category.Id)"><span class="bi bi-arrow-up-short"></span></button>
+                                        <button type="button" class="btn btn-primary" disabled="@(iItem == items.Length - 1)" @onclick="x => HandleOrderableDown(item, y => y.CategoryId == category.Id)"><span class="bi bi-arrow-down-short"></span></button>
+                                        <button type="button" class="btn btn-danger" @onclick="x => InitializeDelete(item)"><span class="bi bi-trash"></span></button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group input-group flex-nowrap mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <input type="checkbox" @bind="item.Show" @onblur="HandleBlurs" />
+                                            </div>
+                                        </div>
+                                        <input type="text" @bind="item.Name" @onblur="HandleBlurs" class="form-control" placeholder="Menu item name" style="min-width:100px;" />
+                                    </div>
+                                    <input type="text" @bind="item.Description" @onblur="HandleBlurs" class="form-control form-control-sm" placeholder="Menu item description" />
+                                    <small class="d-block text-muted">Qualities:</small>
+                                    @foreach (var quality in _menuDbc.Qualities.Local.OrderBy(q => q.Order).ThenBy(q => q.Id).ToArray())
+                                    {
+                                        var isQualityEnabled = _menuDbc.ItemQualities.Local.Where(j => j.ItemId == item.Id).Where(j => j.QualityId == quality.Id).Any();
+                                        <label class="d-inline-flex justify-content-center align-items-center mr-2 mb-2">
+                                            <input type="checkbox" checked="@isQualityEnabled" title="@(quality.Description ?? quality.Name)" @onchange="evArgs => HandleToggleQuality(quality.Id, item.Id)" @onchange:preventDefault>
+                                            <img src="/Uploads/Qualities/@(quality.Id).svg?imageupdateDate=@(quality.ImageUpdateDate.ToString("O"))" title="@(quality.Description ?? quality.Name)" style="height:1.3em; width:1.3em;" />
+                                        </label>
+                                    }
+                                    <small class="d-block text-muted">Allergens:</small>
+                                    @foreach (var allergen in _menuDbc.Allergens.Local.OrderBy(q => q.Order).ThenBy(q => q.Id).ToArray())
+                                    {
+                                        var isAllergenEnabled = _menuDbc.ItemAllergens.Local.Where(j => j.ItemId == item.Id).Where(j => j.AllergenId == allergen.Id).Any();
+                                        <label class="d-inline-flex justify-content-center align-items-center mr-2 mb-2">
+                                            <input type="checkbox" checked="@isAllergenEnabled" title="@(allergen.Description ?? allergen.Name)" @onchange="evArg => HandleToggleAllergen(allergen.Id, item.Id)" @onchange:preventDefault>
+                                            <img src="/Uploads/Allergens/@(allergen.Id).svg?imageupdateDate=@(allergen.ImageUpdateDate.ToString("O"))" title="@(allergen.Description ?? allergen.Name)" style="height:1.3em; width:1.3em;" />
+                                        </label>
+                                    }
+                                </td>
+                                @foreach (var priceKind in priceKinds)
+                                {
+                                    var price = _menuDbc.Prices.Local.Where(x => x.MenuItemId == item.Id).Where(x => x.MenuPriceKindId == priceKind.Id).SingleOrDefault();
+                                    if (price == null)
+                                    {
+                                        price = new Data.Menu.Price() { MenuItemId = item.Id, MenuPriceKindId = priceKind.Id };
+                                        using (var scope = _serviceScopeFactory.CreateScope())
+                                        {
+                                            var tempDbc = scope.ServiceProvider.GetRequiredService<Data.Menu.DbContext>();
+                                            tempDbc.Prices.Add(price);
+                                            tempDbc.SaveChanges();
+                                        }
+                                        _menuDbc.Prices.Attach(price);
+                                    }
+                                    <td class="align-top">
+                                        <div class="input-group input-group-sm flex-nowrap">
+                                            <input type="number" @bind="price.Value" @onblur="HandleBlurs" step="0.1" class="form-control" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">€</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                    <tr>
+                        <td colspan="1000">
+                            <button type="button" class="btn btn-primary btn-sm" @onclick="async x => await HandleAddNewItem(category)"><span class="bi bi-plus"></span></button>
+                        </td>
+                    </tr>
+                </table>
+            }
+        }
+    </div>
+    <button type="button" class="btn btn-primary btn-sm" @onclick="HandleAddNewCategory"><span class="bi bi-plus-circle"></span> Add category</button>
+    <input id="input-file" type="file" @ref="inputTypeFileElement" @onchange="ReadFile" class="d-none" accept="image/*" />
+}
+@code {
+    private Boolean disposedValue;
+    private DotNetObjectReference<MenuEditor> _dotNetObjectReference;
+    private ElementReference inputTypeFileElement;
+    private Data.INamed _entityToDelete = null;
+    private Data.Menu.Category changingImageCategory = null;
+    IServiceScope _mainScope = null!;
+    Data.Menu.DbContext _menuDbc = null!;
+    private Boolean _shouldRender = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(Boolean firstRender)
+    {
+        try
+        {
+            if (firstRender)
+            {
+                await JSRuntime.InvokeVoidAsync("NapaJsInterop.Initialize", _dotNetObjectReference);
+                await Task.Run(async () =>
+                {
+                    _mainScope = _serviceScopeFactory.CreateScope();
+                    _menuDbc = _mainScope.ServiceProvider.GetRequiredService<Data.Menu.DbContext>();
+                //_menuDbc.ChangeTracker.AutoDetectChangesEnabled = false;
+                    _menuDbc.ChangeTracker.LazyLoadingEnabled = false;
+
+                    await _menuDbc.Categories.LoadAsync();
+                    await _menuDbc.CategoriesPriceKind.LoadAsync();
+                    await _menuDbc.Items.LoadAsync();
+                    await _menuDbc.Qualities.LoadAsync();
+                    await _menuDbc.ItemQualities.LoadAsync();
+                    await _menuDbc.Allergens.LoadAsync();
+                    await _menuDbc.ItemAllergens.LoadAsync();
+                    await _menuDbc.Prices.LoadAsync();
+                    await this.InvokeAsync(() => StateHasChanged());
+                });
+            }
+            await JSRuntime.InvokeVoidAsync("NapaJsInterop.OnAfterRender", firstRender);
+        }
+        catch (Exception ex) { throw ex; }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    private async Task AvoidingRenderAsync(Func<Task> func)
+    {
+        try
+        {
+            _shouldRender = false;
+            await func();
+        }
+        catch (Exception ex) { throw ex; /*just for inspection*/ }
+        finally
+        {
+            _shouldRender = true;
+        }
+    }
+
+    private async Task HandleAddNewCategory()
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var cat = new Data.Menu.Category() { Name = "Nuova categoria", Show = false, Order = _menuDbc.Categories.Local.Count() };
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var tempDbc = scope.ServiceProvider.GetRequiredService<Data.Menu.DbContext>();
+                tempDbc.Categories.Add(cat);
+                await tempDbc.SaveChangesAsync();
+            }
+            _menuDbc.Categories.Attach(cat);
+        });
+    }
+
+    private async Task HandleAddColumn(Data.Menu.Category category)
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var col = new Data.Menu.CategoryPriceKind() { CategoryId = category.Id, Name = "Qualsiasi", Order = _menuDbc.CategoriesPriceKind.Local.Count() };
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var tempDbc = scope.ServiceProvider.GetRequiredService<Data.Menu.DbContext>
+                ();
+                tempDbc.CategoriesPriceKind.Add(col);
+                await tempDbc.SaveChangesAsync();
+            }
+            _menuDbc.CategoriesPriceKind.Attach(col);
+        });
+    }
+
+    private async Task HandleAddNewItem(Data.Menu.Category category)
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var newItem = new Data.Menu.Item() { CategoryId = category.Id, Show = false, Name = "New Item", Order = _menuDbc.Items.Local.Count() };
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var tempDbc = scope.ServiceProvider.GetRequiredService<Data.Menu.DbContext>
+                    ();
+                tempDbc.Items.Add(newItem);
+                await tempDbc.SaveChangesAsync();
+            }
+            _menuDbc.Items.Attach(newItem);
+        });
+    }
+
+    private void InitializeDelete(Data.INamed entity)
+    {
+        _entityToDelete = entity;
+        var kind = String.Empty;
+        switch (_entityToDelete)
+        {
+            case Data.Menu.Category x:
+                kind = "Category";
+                break;
+            case Data.Menu.CategoryPriceKind x:
+                kind = "Price column";
+                break;
+            case Data.Menu.Item x:
+                kind = "Menu item";
+                break;
+        }
+        JSRuntime.InvokeVoidAsync("NapaJsInterop.ShowDeleteModal", entity.Name, kind);
+    }
+
+    private async Task HandleDeleteQuality(Data.Menu.Quality quality)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<Boolean>("confirm", $"You are about to delete a quality named '{quality.Name}'");
+        if (confirmed)
+        {
+            _menuDbc.ItemQualities.RemoveRange(_menuDbc.ItemQualities.Where(x => x.QualityId == quality.Id));
+            await _menuDbc.SaveChangesAsync();
+            _menuDbc.Qualities.Remove(quality);
+            await _menuDbc.SaveChangesAsync();
+        }
+    }
+
+    private async Task HandleDeleteAllergen(Data.Menu.Allergen allergen)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<Boolean>("confirm", $"You are about to delete an allergen named '{allergen.Name}'");
+        if (confirmed)
+        {
+            _menuDbc.ItemAllergens.RemoveRange(_menuDbc.ItemAllergens.Where(x => x.AllergenId == allergen.Id));
+            await _menuDbc.SaveChangesAsync();
+            _menuDbc.Allergens.Remove(allergen);
+            await _menuDbc.SaveChangesAsync();
+        }
+    }
+
+    [JSInvokable]
+    public async Task ConfirmDelete()
+    {
+        switch (_entityToDelete)
+        {
+            case Data.Menu.Category x:
+                await DeleteCategory(x);
+                break;
+            case Data.Menu.CategoryPriceKind x:
+                await DeleteColumn(x);
+                break;
+            case Data.Menu.Item x:
+                await DeleteMenuItem(x);
+                break;
+            default: break;
+        }
+        StateHasChanged();
+    }
+
+    private async Task DeleteCategory(Data.Menu.Category category)
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var items = _menuDbc.Items.Local.Where(x => x.CategoryId == category.Id);
+            foreach (var item in items)
+            {
+                var prices = _menuDbc.Prices.Local.Where(x => x.MenuItemId == item.Id).ToArray();
+                _menuDbc.Prices.RemoveRange(prices);
+                await _menuDbc.SaveChangesAsync();
+            }
+            _menuDbc.Items.RemoveRange(items);
+            await _menuDbc.SaveChangesAsync();
+
+            var priceKinds = _menuDbc.CategoriesPriceKind.Local.Where(x => x.CategoryId == category.Id);
+            _menuDbc.CategoriesPriceKind.RemoveRange(priceKinds);
+            await _menuDbc.SaveChangesAsync();
+
+            _menuDbc.Categories.RemoveRange(category);
+            await _menuDbc.SaveChangesAsync();
+        });
+    }
+
+    private async Task DeleteColumn(Data.Menu.CategoryPriceKind priceKind)
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var prices = _menuDbc.Prices.Local.Where(x => x.MenuPriceKindId == priceKind.Id).ToArray();
+            _menuDbc.Prices.RemoveRange(prices);
+            await _menuDbc.SaveChangesAsync();
+            _menuDbc.CategoriesPriceKind.Remove(priceKind);
+            await _menuDbc.SaveChangesAsync();
+        });
+    }
+
+    private async Task DeleteMenuItem(Data.Menu.Item item)
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var prices = _menuDbc.Prices.Local.Where(x => x.MenuItemId == item.Id).ToArray();
+            _menuDbc.Prices.RemoveRange(prices);
+            await _menuDbc.SaveChangesAsync();
+            _menuDbc.Items.Remove(item);
+            await _menuDbc.SaveChangesAsync();
+        });
+    }
+
+    private async Task HandleOrderableUp<T>(T item, Func<T, Boolean> filterFunc) where T : class, Data.IOrderable
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var previous = _menuDbc.Set<T>().Local.Where(filterFunc).Where(x => x.Order == item.Order - 1).SingleOrDefault();
+            item.Order--;
+            if (previous != null) previous.Order++;
+            await _menuDbc.SaveChangesAsync();
+        });
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    private async Task HandleOrderableDown<T>(T item, Func<T, Boolean> filterFunc) where T : class, Data.IOrderable
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var next = _menuDbc.Set<T>().Local.Where(filterFunc).Where(x => x.Order == item.Order + 1).SingleOrDefault();
+            item.Order++;
+            if (next != null) next.Order--;
+            await _menuDbc.SaveChangesAsync();
+        });
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    private async Task HandleBlurs(EventArgs eventArgs)
+    {
+        await AvoidingRenderAsync(async () => await _menuDbc.SaveChangesAsync());
+    }
+
+    public MenuEditor()
+    {
+        _dotNetObjectReference = DotNetObjectReference.Create(this);
+    }
+
+    [JSInvokable]
+    public void HandleClosedDeleteModal()
+    {
+        _entityToDelete = null;
+    }
+
+    private async Task LoadFilesQuality(InputFileChangeEventArgs e, Data.Menu.Quality quality)
+    {
+        await AvoidingRenderAsync(async () =>
+         {
+             var fileName = $"{quality.Id}.svg";
+             var path = "Uploads\\Qualities";
+             await UploadTo(e, fileName, path);
+             quality.ImageUpdateDate = DateTime.Now;
+             await _menuDbc.SaveChangesAsync();
+         });
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    private async Task LoadFilesAllergen(InputFileChangeEventArgs e, Data.Menu.Allergen allergen)
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var fileName = $"{allergen.Id}.svg";
+            var path = "Uploads\\Allergens";
+            await UploadTo(e, fileName, path);
+            allergen.ImageUpdateDate = DateTime.Now;
+            await _menuDbc.SaveChangesAsync();
+        });
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    private async Task UploadTo(InputFileChangeEventArgs e, String filename, String path)
+    {
+        using (var remoteFileStream = e.File.OpenReadStream())
+        {
+            var dirPath = System.IO.Path.Combine(_webHostEnv.WebRootPath, path);
+            if (!System.IO.Directory.Exists(dirPath))
+            {
+                System.IO.Directory.CreateDirectory(dirPath);
+            }
+            var filePath = System.IO.Path.Combine(dirPath, filename);
+            using (var file = System.IO.File.Create(filePath))
+            {
+                await remoteFileStream.CopyToAsync(file);
+            }
+        }
+    }
+
+    public async Task ReadFile()
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            if (changingImageCategory == null) return;
+            var reference = fileReaderService.CreateReference(inputTypeFileElement);
+            var remoteFile = (await reference.EnumerateFilesAsync()).FirstOrDefault();
+            if (remoteFile == null) return;
+
+            var remoteFileInfo = await remoteFile.ReadFileInfoAsync();
+            // Read into buffer and act (uses less memory)
+            await using (var remoteFileStream = await remoteFile.OpenReadAsync())
+            {
+                var dirPath = System.IO.Path.Combine(_webHostEnv.WebRootPath, "Uploads");
+                if (!System.IO.Directory.Exists(dirPath))
+                {
+                    System.IO.Directory.CreateDirectory(dirPath);
+                }
+                var filePath = System.IO.Path.Combine(dirPath, remoteFileInfo.Name);
+                using (var file = System.IO.File.Create(filePath))
+                {
+                    await remoteFileStream.CopyToAsync(file);
+                }
+            }
+
+            await reference.ClearValue();
+            changingImageCategory.ImageUrl = $"/Uploads/{System.Net.WebUtility.UrlEncode(remoteFileInfo.Name)}";
+            await _menuDbc.SaveChangesAsync();
+            StateHasChanged();
+        });
+    }
+
+    private async Task HandleAddNewQuality()
+    {
+        _menuDbc.Qualities.Add(new Data.Menu.Quality()
+            {
+                Name = "New Quality",
+                Order = _menuDbc.Qualities.Local.Max(x => x.Order) + 1
+            });
+        await _menuDbc.SaveChangesAsync();
+    }
+    private async Task HandleAddNewAllergen()
+    {
+        _menuDbc.Allergens.Add(new Data.Menu.Allergen()
+            {
+                Name = "New Allergen",
+                Order = _menuDbc.Allergens.Local.Max(x => x.Order) + 1
+            });
+        await _menuDbc.SaveChangesAsync();
+
+    }
+
+    protected async Task HandleToggleQuality(Int32 qualityId, Int32 itemId)
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var menudbcEntity = _menuDbc.ItemQualities.Local.Where(x => x.QualityId == qualityId).Where(x => x.ItemId == itemId).SingleOrDefault();
+            var joinPresent = menudbcEntity != null;
+            //using (var scope = _serviceScopeFactory.CreateScope())
+            //{
+            //var tempDbc = scope.ServiceProvider.GetRequiredService<Data.Menu.DbContext>();
+            if (!joinPresent)
+            {
+                var newent = new Data.Menu.ItemQuality() { ItemId = itemId, QualityId = qualityId };
+                _menuDbc.ItemQualities.Local.Add(newent);
+                //tempDbc.ItemQualities.Add(newent);
+            }
+            else
+            {
+                _menuDbc.ItemQualities.Local.Remove(menudbcEntity);
+                //var ent = tempDbc.ItemQualities.Where(x => x.QualityId == qualityId).Where(x => x.ItemId == itemId).SingleOrDefault();
+                //if (ent != null)
+                //{
+                //    var entry = tempDbc.Entry(ent);
+                //    entry.State = EntityState.Deleted;
+                //}
+            }
+            await _menuDbc.SaveChangesAsync();
+            //}
+        });
+        StateHasChanged();
+    }
+
+    protected async Task HandleToggleAllergen(Int32 allergenId, Int32 itemId)
+    {
+        await AvoidingRenderAsync(async () =>
+        {
+            var menudbcEntity = _menuDbc.ItemAllergens.Local.Where(x => x.AllergenId == allergenId).Where(x => x.ItemId == itemId).SingleOrDefault();
+            var joinPresent = menudbcEntity != null;
+            //using (var scope = _serviceScopeFactory.CreateScope())
+            //{
+            //var tempDbc = scope.ServiceProvider.GetRequiredService<Data.Menu.DbContext>();
+            if (!joinPresent)
+            {
+                _menuDbc.ItemAllergens.Add(new Data.Menu.ItemAllergen() { ItemId = itemId, AllergenId = allergenId });
+            }
+            else
+            {
+                _menuDbc.ItemAllergens.Local.Remove(menudbcEntity);
+                //var ent = tempDbc.ItemAllergens.Where(x => x.AllergenId == allergenId).Where(x => x.ItemId == itemId).SingleOrDefault();
+                //if (ent != null)
+                //{
+                //    var entry = tempDbc.Entry(ent);
+                //    entry.State = EntityState.Deleted;
+                //}
+            }
+            await _menuDbc.SaveChangesAsync();
+            //}
+        });
+        StateHasChanged();
+    }
+
+    protected virtual void Dispose(Boolean disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                _mainScope?.Dispose();
+                _dotNetObjectReference.Dispose();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+}

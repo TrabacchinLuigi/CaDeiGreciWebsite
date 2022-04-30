@@ -48,34 +48,59 @@
                                 foreach (var item in dbc.Items.Where(x => x.CategoryId == category.Id).Where(x => x.Show).OrderBy(x => x.Order).ToArray())
                                 {
                                     <tr>
-                                        <td>@item.Name <small class="d-block text-muted">@item.Description</small></td>
+                                        <td>
+                                            <div class="d-flex justify-content-between">
+                                                <span>@item.Name</span>
+                                                
+                                            </div>
+                                            <small class="description d-block text-muted">@item.Description</small>
+                                            <span class="qualities" style="font-size:1.1rem;">
+                                                @foreach (var quality in dbc.Qualities.OrderBy(q => q.Order).ThenBy(q => q.Id).ToArray())
+                                                {
+                                                    var isQualityEnabled = dbc.ItemQualities.Where(j => j.ItemId == item.Id).Where(j => j.QualityId == quality.Id).Any();
+                                                    if (isQualityEnabled)
+                                                    {
+                                                        <img class="mr-2" src="/Uploads/Qualities/@(quality.Id).svg?imageupdateDate=@(quality.ImageUpdateDate.ToString("O"))" title="@(quality.Description ?? quality.Name)" style="height:1.3em; width:1.3em;" />
+                                                    }
+                                                }
+                                            </span>
+                                            <span class="allergens" style="font-size: 1rem;">
+                                                @foreach (var allergen in dbc.Allergens.OrderBy(q => q.Order).ThenBy(q => q.Id).ToArray())
+                                                {
+                                                    var isAllergenEnabled = dbc.ItemAllergens.Where(j => j.ItemId == item.Id).Where(j => j.AllergenId == allergen.Id).Any();
+                                                    if (isAllergenEnabled)
+                                                    {
+                                                        <img class="mr-2" src="/Uploads/Allergens/@(allergen.Id).svg?imageupdateDate=@(allergen.ImageUpdateDate.ToString("O"))" title="@(allergen.Description ?? allergen.Name)" style="height:1.3em; width:1.3em;" />
+                                                    }
+                                                }
+                                            </span>
+                                        </td>
                                         @{
                                             var prices = priceCats.Select(pc => dbc.Prices.Where(x => x.MenuItemId == item.Id).Where(x => x.MenuPriceKindId == pc.Id).Single()).ToArray();
                                             var grouped = prices
-                                            .Select(x => (ColSpan: (Byte)1, Value: x.Value))
-                                            .Aggregate(
-                                            new List<(Byte Colspan, Single Value)>(),
-                                            (x, y) =>
-                                            {
-                                                if (!x.Any()) { x.Add(y); }
-                                                else
-                                                {
-                                                    var previousGroup = x.Last();
-                                                    x.RemoveAt(x.Count - 1);
-                                                    if (previousGroup.Value == y.Value)
+                                                .Select(x => (ColSpan: (Byte)1, Value: x.Value))
+                                                .Aggregate(
+                                                    new List<(Byte Colspan, Single Value)>(),
+                                                    (x, y) =>
                                                     {
-                                                        previousGroup.Colspan++;
-                                                        x.Add(previousGroup);
-                                                    }
-                                                    else
-                                                    {
-                                                        x.Add(previousGroup);
-                                                        x.Add(y);
-                                                    }
-
-                                                }
-                                                return x;
-                                            });
+                                                        if (!x.Any()) { x.Add(y); }
+                                                        else
+                                                        {
+                                                            var previousGroup = x.Last();
+                                                            x.RemoveAt(x.Count - 1);
+                                                            if (previousGroup.Value == y.Value)
+                                                            {
+                                                                previousGroup.Colspan++;
+                                                                x.Add(previousGroup);
+                                                            }
+                                                            else
+                                                            {
+                                                                x.Add(previousGroup);
+                                                                x.Add(y);
+                                                            }
+                                                        }
+                                                        return x;
+                                                    });
                                         }
                                         @foreach (var priceGroup in grouped)
                                         {
@@ -85,7 +110,7 @@
                                             }
                                             else
                                             {
-                                                <td colspan="@priceGroup.Colspan" class="text-nowrap">@priceGroup.Value.ToString("F") €</td>
+                                                <td colspan="@priceGroup.Colspan" class="text-nowrap align-middle">@priceGroup.Value.ToString("F") €</td>
                                             }
                                         }
                                     </tr>

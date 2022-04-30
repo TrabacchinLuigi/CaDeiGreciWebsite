@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Authorization
-@using Microsoft.Extensions.DependencyInjection
-@page "/backend/settings"
+﻿@page "/backend/settings"
 @attribute [Authorize(Roles = Roles.Administrator)]
 
 @inject IServiceScopeFactory _serviceScopeFactory

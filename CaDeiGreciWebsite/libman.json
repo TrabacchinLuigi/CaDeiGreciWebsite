@@ -10,7 +10,7 @@
       ]
     },
     {
-      "library": "popper.js@2.11.5",
+      "library": "popper.js@1.16.1",
       "destination": "wwwroot/libs/popper.js/",
       "files": [
         "umd/popper.min.js"

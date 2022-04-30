@@ -34,7 +34,7 @@ namespace CaDeiGreciWebsite
                     Configuration.GetConnectionString("SettingsConnection")));
             services.AddDbContext<Data.Identity.DbContext>(options =>
                options.UseSqlServer(
-                   Configuration.GetConnectionString("IdentityConnection")));
+                   Configuration.GetConnectionString("IdentityConnection")/*, x => x.MigrationsHistoryTable("__MyMigrationsHistory", "mySchema")*/));
             services.AddDbContext<Data.Menu.DbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("MenuConnection")));
@@ -186,7 +186,7 @@ namespace CaDeiGreciWebsite
                     {
                         //var mailsender = scope.ServiceProvider.GetService<SilentWave.Network.EmailService.IEmailSender>();
                         var mailsender = tempScope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender>();
-                        //await mailsender.SendEmailAsync("trabacchin.luigi@gmail.com", "prova", "ciao");
+                        //await mailsender.SendEmailAsync("xxx@gmail.com", "Test", "Hi <strong>This is a test</strong>");
                     }
                 }
                 catch (Exception ex) { _logger.LogError(ex, "can't resolve required mail sender"); }
