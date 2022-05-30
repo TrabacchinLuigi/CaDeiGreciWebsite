@@ -22,9 +22,9 @@
     </div>
     <div class="container d-flex justify-content-center flex-column text-center text-light">
         <a class="brand" href="#"><inlinesvg src="images\ca-dei-greci-logo.svg" /></a>
-        <h1 class="display-4">Coming soon</h1>
-
-        <div class="d-flex flex-column text-left align-self-center">
+        @*<h1 class="display-4">Coming soon</h1>
+*@
+        <div class="d-flex flex-column text-left align-self-center mt-4">
             <div class="address d-flex flex-row">
                 <i class="bi bi-compass mr-3"></i>
                 <div class="d-flex flex-column">
@@ -39,6 +39,22 @@
                     <span><a href="tel:+390413081465">+39 0413081465</a></span>
                 </div>
             </div>
+            <div class="phone d-flex flex-row">
+                <i class="bi bi-clock mr-3"></i>
+                <div class="d-flex flex-column">
+                    <span>Orari di apertura</span>
+                    <span><partial name="_Openings" /></span>
+                </div>
+            </div>
+            <div class="phone d-flex flex-row">
+                <i class="bi bi-map mr-3"></i>
+                <div class="d-flex flex-column">
+                    <span>Guarda il nostro <a href="/menu">Menu</a></span>
+                </div>
+            </div>
+
+            
+
         </div>
     </div>
 

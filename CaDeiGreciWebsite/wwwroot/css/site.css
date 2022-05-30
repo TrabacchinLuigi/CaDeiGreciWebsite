@@ -153,7 +153,7 @@ body {
         --side: min(80vw, 80vh);
         width: var(--side) !important;
         height: var(--side) !important;
-        font-size: min(2vw, 2vh) !important;
+        font-size: min(2.5vw, 2.5vh) !important;
         max-width: unset;
         max-height: unset;
     }
